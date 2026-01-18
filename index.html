@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YOLO Pose Aggregator</title>
+
+    <link rel="stylesheet" href="assets/css/main.css" />
+</head>
+
+<body class="light-mode">
+
+<h1>YOLO Pose Aggregator</h1>
+
+<label>
+    Number of Raspberry Pis:
+    <input type="number" id="numPis" min="1" max="10" placeholder="3">
+</label>
+<button onclick="createFields()">Next</button>
+
+<div id="ipInputs" class="hidden">
+    <h3>Enter the IP addresses of your Pis:</h3>
+    <form id="piForm"></form>
+    <button onclick="goToLiveFeed()">Load Streams</button>
+</div>
+
+<script>
+function createFields() {
+    const num = parseInt(document.getElementById("numPis").value);
+    if (!num || num < 1) {
+        alert("Enter a valid number of Pis");
+        return;
+    }
+
+    const form = document.getElementById("piForm");
+    form.innerHTML = "";
+
+    for (let i = 1; i <= num; i++) {
+        const label = document.createElement("label");
+        label.innerHTML = `
+            Pi ${i} IP:
+            <input type="text" id="pi${i}" placeholder="192.168.x.x"><br>
+        `;
+        form.appendChild(label);
+    }
+
+    document.getElementById("ipInputs").classList.remove("hidden");
+}
+
+function goToLiveFeed() {
+    const num = parseInt(document.getElementById("numPis").value);
+    let params = [];
+
+    for (let i = 1; i <= num; i++) {
+        const ip = document.getElementById(`pi${i}`).value.trim();
+        if (ip) {
+            params.push(`pi${i}=${encodeURIComponent(ip)}`);
+        }
+    }
+
+    if (params.length === 0) {
+        alert("Enter at least one IP address");
+        return;
+    }
+
+    window.location.href = `LiveFeed.html?${params.join("&")}`;
+}
+</script>
+
+</body>
+</html>
